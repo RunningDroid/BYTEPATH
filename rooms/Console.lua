@@ -77,7 +77,7 @@ function Console:update(dt)
 
         if input:pressed('down') then
             self.bytepath_main_selection_index = self.bytepath_main_selection_index + 1
-            if self.bytepath_main_selection_index == 8 then self.bytepath_main_selection_index = 1 end
+            if self.bytepath_main_selection_index > #self.bytepath_main_selection_widths then self.bytepath_main_selection_index = 1 end
             playMenuSwitch()
         end
 
