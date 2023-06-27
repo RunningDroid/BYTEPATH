@@ -249,11 +249,12 @@ function Console:bytepathMain(delay)
             classes_string = classes_string .. ';' .. class .. ', - '
         end
     end
+	local gameVersion = require('version')
 
     self:addLine(delay + 0.02, ':: running $BYTEPATH [byte]% in SAFE MODE')
     self:addLine(delay + 0.04, ':: ' .. os.date("%a %b %d ") .. tostring(tonumber(os.date("%Y"))+1000) .. os.date(" %X ") .. 'on ;VCON1,')
     self:addLine(delay + 0.06, '')
-    self:addLine(delay + 0.08, 'Welcome to $BYTEPATH v1.0% - <' .. string.sub(id, 1, 8) .. '>!')
+    self:addLine(delay + 0.08, 'Welcome to $BYTEPATH v' .. gameVersion .. '% - <' .. string.sub(id, 1, 8) .. '>!')
     self:addLine(delay + 0.10, '')
     if loop > 0 then
         self:addLine(delay + 0.12, '$LOOP: ' .. loop .. '% ~~ +10 SP / +5 MAX TREE NODES PER LOOP ~~ UP TO 5 LOOPS')
