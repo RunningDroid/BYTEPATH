@@ -268,10 +268,10 @@ function Console:bytepathMain(delay)
     self:addLine(delay + 0.26, 'Your objective is to escape this terminal by reaching difficulty 40 and finding all keys.')
     self:addLine(delay + 0.28, '~ type @start# to start the simulation with the current device')
     self:addLine(delay + 0.32, '~ type @escape# to escape')
-    self:addLine(delay + 0.34, '~ type @help# to view all builtin commands')
-    self:addLine(delay + 0.36, '~ type @classes# to view the class window')
-    self:addLine(delay + 0.38, '~ type @device# to select a new device')
-    self:addLine(delay + 0.40, '~ type @passives# to view the passive skill tree')
+    self:addLine(delay + 0.34, '~ type @classes# to view the class window')
+    self:addLine(delay + 0.36, '~ type @device# to select a new device')
+    self:addLine(delay + 0.38, '~ type @passives# to view the passive skill tree')
+    self:addLine(delay + 0.40, '~ type @help# to view all builtin commands')
     self:addLine(delay + 0.42, '~ type @shutdown# to save and shut the system down')
     self:addLine(delay + 0.44, '')
     self:addInputLine(delay + 0.46, '[;root,]arch~ ')
@@ -280,8 +280,8 @@ function Console:bytepathMain(delay)
         self.bytepath_main = true
         self.bytepath_main_active = false
         self.bytepath_main_selection_index = 1
-        self.bytepath_main_texts = {'start', 'escape', 'help', 'classes', 'device', 'passives', 'shutdown'}
-        self.bytepath_main_selection_widths = {self.font:getWidth('start'), self.font:getWidth('escape'), self.font:getWidth('help'), self.font:getWidth('classes'), self.font:getWidth('device'), self.font:getWidth('passives'), self.font:getWidth('shutdown')}
+        self.bytepath_main_texts = {'start', 'escape', 'classes', 'device', 'passives', 'help', 'shutdown'}
+        self.bytepath_main_selection_widths = {self.font:getWidth('start'), self.font:getWidth('escape'), self.font:getWidth('classes'), self.font:getWidth('device'), self.font:getWidth('passives'), self.font:getWidth('help'), self.font:getWidth('shutdown')}
         if loop > 0 then self.bytepath_main_y = self.line_y + 13*12
         else self.bytepath_main_y = self.line_y + 13*12 - 12 end
         self.timer:after(0.42, function() self.bytepath_main_active = true end)
@@ -315,10 +315,10 @@ function Console:bytepathMain2()
     self:addLine(delay + 0.16, 'Your objective is to escape this terminal by reaching difficulty 40 and finding all keys.')
     self:addLine(delay + 0.18, '~ type @start# to start the simulation with the current device')
     self:addLine(delay + 0.22, '~ type @escape# to escape')
-    self:addLine(delay + 0.24, '~ type @help# to view all builtin commands')
-    self:addLine(delay + 0.26, '~ type @classes# to view the class window')
-    self:addLine(delay + 0.28, '~ type @device# to select a new device')
-    self:addLine(delay + 0.30, '~ type @passives# to view the passive skill tree')
+    self:addLine(delay + 0.24, '~ type @classes# to view the class window')
+    self:addLine(delay + 0.26, '~ type @device# to select a new device')
+    self:addLine(delay + 0.28, '~ type @passives# to view the passive skill tree')
+    self:addLine(delay + 0.30, '~ type @help# to view all builtin commands')
     self:addLine(delay + 0.32, '~ type @shutdown# to save and shut the system down')
     self:addLine(delay + 0.34, '')
     self:addInputLine(delay + 0.36, '[;root,]arch~ ')
@@ -327,8 +327,8 @@ function Console:bytepathMain2()
         self.bytepath_main = true
         self.bytepath_main_active = false
         self.bytepath_main_selection_index = 1
-        self.bytepath_main_texts = {'start', 'escape', 'help', 'classes', 'device', 'passives', 'shutdown'}
-        self.bytepath_main_selection_widths = {self.font:getWidth('start'), self.font:getWidth('escape'), self.font:getWidth('help'), self.font:getWidth('classes'), self.font:getWidth('device'), self.font:getWidth('passives'), self.font:getWidth('shutdown')}
+        self.bytepath_main_texts = {'start', 'escape', 'classes', 'device', 'passives', 'help', 'shutdown'}
+        self.bytepath_main_selection_widths = {self.font:getWidth('start'), self.font:getWidth('escape'), self.font:getWidth('classes'), self.font:getWidth('device'), self.font:getWidth('passives'), self.font:getWidth('help'), self.font:getWidth('shutdown')}
         self.bytepath_main_y = self.line_y + 9*12 - 12
         self.timer:after(0.32, function() self.bytepath_main_active = true end)
     end)
