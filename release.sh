@@ -22,8 +22,9 @@ cd "$repo_dir"
 )
 
 # some stuff in the repo doesn't need to be included in the release
-# zip's --exclude doesn't exclude directories, test case: `zip -sf --recurse-paths test.zip . --exclude tutorial/ release.sh | grep tutorial`
-find . \! -path './tutorial*' \! -path './.git*' \! -path './release.sh' \! -path './BYTEPATH.love' \! -path './resources/BYTEPATH.desktop' | zip -9 --names-stdin BYTEPATH.love
+zip -9 --recurse-paths BYTEPATH.love . \
+	--exclude 'tutorial/*' --exclude '.git*' --exclude release.sh \
+	--exclude BYTEPATH.love --exclude resources/BYTEPATH.desktop
 
 tmp_dir="$(mktemp -d)"
 cd "$tmp_dir"
