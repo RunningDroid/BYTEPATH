@@ -22,9 +22,11 @@ cd "$repo_dir"
 )
 
 # some stuff in the repo doesn't need to be included in the release
-zip -9 --recurse-paths BYTEPATH.love . \
-	--exclude 'tutorial/*' --exclude '.git*' --exclude release.sh \
-	--exclude BYTEPATH.love --exclude resources/BYTEPATH.desktop
+zip -9 --recurse-paths BYTEPATH.love \
+	libraries objects resources rooms \
+	./*.lua LICENSE README.md \
+	--exclude resources/BYTEPATH.desktop \
+	--exclude '*/.git*' --exclude '*/.travis*'
 
 tmp_dir="$(mktemp -d)"
 cd "$tmp_dir"
