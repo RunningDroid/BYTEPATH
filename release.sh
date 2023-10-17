@@ -8,21 +8,15 @@ current_love_release='11.4'
 repo_dir="$(realpath "$(dirname "$0")")"
 cd "$repo_dir"
 
-(
-	# separated by '' (Unit Separator (0x1F) usually rendered as '^_') (Ctrl-v Ctrl-Shift--)
-	generated_files="BYTEPATH.loveBYTEPATH-win32.zipBYTEPATH.AppImagegame_64.AppImage"
 
-	# set IFS to Unit Separator (GitHub doesn't render control characters)
-	IFS=''
-	for file in ${generated_files}; do
-		if [ -e "$file" ]; then
-			rm "$file"
-		fi
-	done
-)
+if [ -e build ]; then
+	rm -r build
+fi
+
+mkdir build
 
 # some stuff in the repo doesn't need to be included in the release
-zip -9 --recurse-paths BYTEPATH.love \
+zip -9 --recurse-paths build/BYTEPATH.love \
 	libraries objects resources rooms \
 	./*.lua LICENSE README.md \
 	--exclude resources/BYTEPATH.desktop \
@@ -42,13 +36,13 @@ love_dir_name="$(basename love-win32/* )"
 cd "love-win32/$love_dir_name"
 
 rm 'readme.txt'
-cat "love.exe" "${repo_dir}/BYTEPATH.love" > "BYTEPATH.exe"
+cat "love.exe" "${repo_dir}/build/BYTEPATH.love" > "BYTEPATH.exe"
 
 cd ..
 
 mv "$love_dir_name" 'BYTEPATH'
 zip -9 --recurse-paths 'BYTEPATH-win32.zip' 'BYTEPATH'
-mv 'BYTEPATH-win32.zip' "$repo_dir"
+mv 'BYTEPATH-win32.zip' "$repo_dir/build"
 
 cd "$tmp_dir"
 
@@ -63,7 +57,7 @@ curl --disable --location --remote-name 'https://github.com/AppImage/AppImageKit
 chmod +x 'love-x86_64.AppImage' 'appimagetool-x86_64.AppImage'
 ./love-x86_64.AppImage --appimage-extract
 
-cat 'squashfs-root/bin/love' "${repo_dir}/BYTEPATH.love" > 'squashfs-root/bin/BYTEPATH'
+cat 'squashfs-root/bin/love' "${repo_dir}/build/BYTEPATH.love" > 'squashfs-root/bin/BYTEPATH'
 chmod +x 'squashfs-root/bin/BYTEPATH'
 
 rm 'squashfs-root/love.desktop'
@@ -71,8 +65,8 @@ cp "${repo_dir}/resources/BYTEPATH.desktop" 'squashfs-root/'
 
 ./appimagetool-x86_64.AppImage 'squashfs-root' 'BYTEPATH.AppImage'
 
-mv 'BYTEPATH.AppImage' "$repo_dir"
+mv 'BYTEPATH.AppImage' "$repo_dir/build"
 
-cd "$repo_dir"
+cd "$repo_dir/build"
 rm -r "$tmp_dir"
 cp 'BYTEPATH.AppImage' 'game_64.AppImage'
