@@ -63,7 +63,12 @@ chmod +x 'squashfs-root/bin/BYTEPATH'
 rm 'squashfs-root/love.desktop'
 cp "${repo_dir}/resources/BYTEPATH.desktop" 'squashfs-root/'
 
-./appimagetool-x86_64.AppImage 'squashfs-root' 'BYTEPATH.AppImage'
+if [ "${CI:-'false'}" = 'true' ] ; then
+	# we're in a container, fuse won't work
+	./appimagetool-x86_64.AppImage --appimage-extract-and-run 'squashfs-root' 'BYTEPATH.AppImage'
+else
+	./appimagetool-x86_64.AppImage 'squashfs-root' 'BYTEPATH.AppImage'
+fi
 
 mv 'BYTEPATH.AppImage' "$repo_dir/build"
 
