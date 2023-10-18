@@ -15,7 +15,7 @@ function CreditsModule:new(console, y)
     self.console:addLine(0.18, '    made with $love2d.org% with help from')
     self.console:addLine(0.20, '        $slime bartbes CapsAdmin rxi RolandYonaba vrld pelevesque davisdude gvx bakpakin%')
     self.console:addLine(0.22, '    contributions from')
-    self.console:addLine(0.24, '        $dulsi RobotLucca Runningdroid%')
+    self.console:addLine(0.24, '        $dulsi RobotLucca Runningdroid jn64%')
     self.console:addLine(0.26, '')
 
     self.y = y
@@ -139,6 +139,7 @@ function CreditsModule:setSelections()
             {ox = font:getWidth('        '), width = font:getWidth('dulsi'), link = 'https://github.com/dulsi'},
             {ox = font:getWidth('        dulsi '), width = font:getWidth('RobotLucca'), link = 'https://steamcommunity.com/profiles/76561198039192925'},
             {ox = font:getWidth('        dulsi RobotLucca '), width = font:getWidth('Runningdroid'), link = 'https://github.com/RunningDroid'},
+            {ox = font:getWidth('        dulsi RobotLucca Runningdroid '), width = font:getWidth('jn64'), link = 'https://github.com/jn64'},
         },
     }
 end
