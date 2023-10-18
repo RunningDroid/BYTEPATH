@@ -23,9 +23,44 @@ zip -9 --recurse-paths build/BYTEPATH.love \
 	--exclude '*/.git*' --exclude '*/.travis*'
 
 tmp_dir="$(mktemp -d)"
+# shellcheck disable=2064
+trap "[ -d $tmp_dir ] && rm -r $tmp_dir" 0 1 2 3 # clean up even if we error
 cd "$tmp_dir"
 
-# create a Windows executable
+#{ grab random libraries
+mkdir 'windows32-libraries' 'linux64-libraries'
+
+# Valve kinda requires a login to fetch the steam SDK
+# so builds that include the steam_api libs require manual intervention
+
+# grab the steam SDK, which contains the steam_api libs
+# we only get a zip archive here if someone (at the same IP?) opens the link in a browser, signs in, and downloads the file
+# cleaner link: https://partner.steamgames.com/downloads/steamworks_sdk_157.zip
+curl --disable --location --output 'steamworks_sdk.zip' "https://partner.steamgames.com/downloads/steamworks_sdk_157.zip"
+if [ "$(file --brief --mime-type 'steamworks_sdk.zip')" = 'application/zip' ];then
+	# only extract the files we want
+	unzip steamworks_sdk.zip 'sdk/redistributable_bin/steam_api.dll' 'sdk/redistributable_bin/linux64/libsteam_api.so'
+	sdk=true
+else
+	# server-side token expired?
+	echo "Valve redirected us instead of letting us download the SDK"
+	sdk=false
+fi
+
+# grab copies of luasteam for win32 & lin64
+curl --disable --location --output 'luasteam.dll' 'https://github.com/uspgamedev/luasteam/releases/download/v2.0.0%2Bfix/win32_luasteam.dll'
+curl --disable --location --output 'luasteam.so' 'https://github.com/uspgamedev/luasteam/releases/download/v2.0.0%2Bfix/linux64_luasteam.so'
+
+if [ "$sdk" = 'true' ]; then
+	mv -t 'windows32-libraries' 'sdk/redistributable_bin/steam_api.dll'
+	mv -t 'linux64-libraries' 'sdk/redistributable_bin/linux64/libsteam_api.so'
+fi
+
+mv -t 'windows32-libraries' 'luasteam.dll'
+mv -t 'linux64-libraries' 'luasteam.so'
+#}
+
+#{ create a Windows executable
 curl --disable --location --output 'love-win32.zip' \
 	"https://github.com/love2d/love/releases/download/${current_love_release}/love-${current_love_release}-win32.zip"
 
@@ -38,15 +73,18 @@ cd "love-win32/$love_dir_name"
 rm 'readme.txt'
 cat "love.exe" "${repo_dir}/build/BYTEPATH.love" > "BYTEPATH.exe"
 
+mv -t . "${tmp_dir}"/windows32-libraries/*
+
 cd ..
 
 mv "$love_dir_name" 'BYTEPATH'
 zip -9 --recurse-paths 'BYTEPATH-win32.zip' 'BYTEPATH'
 mv 'BYTEPATH-win32.zip' "$repo_dir/build"
+#}
 
 cd "$tmp_dir"
 
-# create a Linux appimage
+#{ create a Linux appimage
 mkdir love-lin64
 cd love-lin64
 
@@ -60,6 +98,12 @@ chmod +x 'love-x86_64.AppImage' 'appimagetool-x86_64.AppImage'
 cat 'squashfs-root/bin/love' "${repo_dir}/build/BYTEPATH.love" > 'squashfs-root/bin/BYTEPATH'
 chmod +x 'squashfs-root/bin/BYTEPATH'
 
+mkdir -p 'squashfs-root/lib/lua/5.1/'
+mv -t 'squashfs-root/lib/lua/5.1/' "${tmp_dir}"/linux64-libraries/luasteam.so
+if [ "$sdk" = 'true' ]; then
+	mv -t 'squashfs-root/lib' "${tmp_dir}"/linux64-libraries/*
+fi
+
 rm 'squashfs-root/love.desktop'
 cp "${repo_dir}/resources/BYTEPATH.desktop" 'squashfs-root/'
 
@@ -71,7 +115,7 @@ else
 fi
 
 mv 'BYTEPATH.AppImage' "$repo_dir/build"
+#}
 
 cd "$repo_dir/build"
-rm -r "$tmp_dir"
 cp 'BYTEPATH.AppImage' 'game_64.AppImage'

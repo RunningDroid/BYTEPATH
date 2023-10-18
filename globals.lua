@@ -125,9 +125,9 @@ function unlockAchievement(achievement_name)
     achievements[achievement_name] = true
     if Steam then
         local steam_achievement_name = achievement_name:upper():gsub(' ', '_')
-        print(Steam.userstats.SetAchievement(steam_achievement_name))
+        print(Steam.userStats.SetAchievement(steam_achievement_name))
         print(achievement_name .. ' unlocked!')
-        timer:after(0.5, function() Steam.userstats.StoreStats() end)
+        timer:after(0.5, function() Steam.userStats.StoreStats() end)
     end
 end
 

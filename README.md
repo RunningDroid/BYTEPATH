@@ -41,18 +41,14 @@ A replayable arcade shooter with a focus on build theorycrafting. Use a massive 
 1. Download `BYTEPATH-win32.zip` from the latest [release](https://github.com/RunningDroid/BYTEPATH/releases)
 2. Extract `BYTEPATH-win32.zip` on top of the version installed by Steam
     - It's most likely `C:\Program Files (x86)\Steam\steamapps\common\BYTEPATH`
-3. Copy `steam_api.dll` from another game and put it in the folder you just extracted
-    - Or you can grab a `steam_api.dll` from the [Steamworks SDK](https://partner.steamgames.com/downloads/list) instead
-4. Enjoy your achievements!
+3. Enjoy your achievements!
 
 ##### Linux
 
 1. Download `game_64.AppImage` from the latest [release](https://github.com/RunningDroid/BYTEPATH/releases)
 2. Replace the `game_64.AppImage` Steam has with the one you just downloaded
     - It's most likely in `$XDG_DATA_HOME/Steam/steamapps/common/BYTEPATH`
-3. Copy `libsteam_api.so` from another game and put it in the same folder as `game_64.AppImage`
-    - Or you can grab a `libsteam_api.so` from the [Steamworks SDK](https://partner.steamgames.com/downloads/list) instead
-4. Enjoy your achievements!
+3. Enjoy your achievements!
 
 ---
 

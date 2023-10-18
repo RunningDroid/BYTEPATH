@@ -79,11 +79,19 @@ function isSteamAPIAvailable()
 			end
 		end
 	elseif currentOS == "Linux" then
+		local APPDIR = os.getenv("APPDIR")
 		-- check for libsteam_api.so in the Present Working Directory
 		apiDotSo, _ = io.open('libsteam_api.so', rb)
 		if apiDotSo ~= nil then
 			io.close(apiDotSo)
 			return true
+		elseif APPDIR then
+			-- find steam_api if this is an appimage
+			apiDotSo, _ = io.open(APPDIR .. '/lib/libsteam_api.so', rb)
+			if apiDotSo ~= nil then
+				io.close(apiDotSo)
+				return true
+			end
 		end
 	else
 		-- I don't know what the steam_api library is named on "OS X"
@@ -92,10 +100,44 @@ function isSteamAPIAvailable()
 end
 
 if isSteamAPIAvailable() then
-	Steam = require 'libraries/steamworks'
-	if type(Steam) == 'boolean' then Steam = nil end
+	local appid = 760330
+	local appid_file = io.open("steam_appid.txt")
+
+	if not appid_file then
+		local appid_file, err = io.open("steam_appid.txt", "w")
+		if appid_file then
+			appid_file:write(appid)
+			io.close(appid_file)
+		else
+			print(string.format("failed to write steam_appid.txt! (it's needed to talk to steam) in pwd : %s\n", err))
+		end
+	else
+		io.close(appid_file)
+	end
+	has_luasteam, Steam = pcall(require, 'luasteam')
+	if not has_luasteam then
+		Steam = nil
+		print("Couldn't load luasteam, disabling Steam integration.\n")
+	else
+		if not Steam.init() then
+			print("Couldn't initialize Steam, disabling Steam integration.\n")
+			Steam = nil
+		else
+			local logged_in = Steam.userStats.requestCurrentStats()
+			if not logged_in then
+				Steam.shutdown()
+				Steam = nil
+			end
+		end
+	end
 else
 	Steam = nil
+end
+
+if Steam then
+	function Steam.userStats.onUserStatsReceived()
+		steam_user_stats_received = true
+	end
 end
 
 function love.load()
@@ -285,6 +327,9 @@ end
 function love.quit()
     save()
     if USING_GAMERZILLA then Gamerzilla.quit() end
+	if Steam then
+		Steam.shutdown()
+	end
     -- Steam already tracks how long each player plays for and since this is the only thing I'm tracking it's unnecessary to run a server for only that info
     -- sendDataToServer(binser.serialize({id = id, duration = os.difftime(os.time(), start_time), start_date = start_date, end_date = os.date("*t")}))
 end
@@ -377,14 +422,25 @@ function save()
 end
 
 function loadAchievementsFromSteam()
-    print(Steam)
-    if Steam then 
+    if Steam then
+		Steam.runCallbacks()
+		if not steam_user_stats_received then
+			-- we probably won't hit this code path
+			while not steam_user_stats_received do
+				Steam.runCallbacks()
+				print("sleeping...\n")
+				-- very dirty because it pauses everything, but the alternative is kicking this off to a separate thread somehow
+				love.timer.sleep(0.001)
+			end
+		end
         for _, achievement_name in ipairs(achievement_names) do
             local steam_achievement_name = achievement_name:upper():gsub(' ', '_')
-            local b = ffi.new('bool[1]')
-            Steam.userstats.GetAchievement(steam_achievement_name, b)
-            achievements[achievement_name] = b[0]
-            -- print('Steam Achievement Load: ', achievement_name, b[0])
+			local success
+            success, achievements[achievement_name] = Steam.userStats.getAchievement(steam_achievement_name)
+			if not success then
+				print("Achievement Doesn't exist:" .. steam_achievement_name)
+			end
+            --print('Steam Achievement Load: ', achievement_name, achievements[achievement_name])
         end
     end
 end
@@ -609,6 +665,10 @@ function love.run()
             if love.draw then love.draw() end
             love.graphics.present()
         end
+
+		if Steam then
+			Steam.runCallbacks()
+		end
 
         if love.timer then love.timer.sleep(0.001) end
     end
