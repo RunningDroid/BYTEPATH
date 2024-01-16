@@ -35,8 +35,8 @@ mkdir 'windows32-libraries' 'linux64-libraries'
 
 # grab the steam SDK, which contains the steam_api libs
 # we only get a zip archive here if someone (at the same IP?) opens the link in a browser, signs in, and downloads the file
-# cleaner link: https://partner.steamgames.com/downloads/steamworks_sdk_157.zip
-curl --disable --location --output 'steamworks_sdk.zip' "https://partner.steamgames.com/downloads/steamworks_sdk_157.zip"
+# cleaner link: https://partner.steamgames.com/downloads/steamworks_sdk_158a.zip
+curl --disable --location --output 'steamworks_sdk.zip' "https://partner.steamgames.com/downloads/steamworks_sdk_158a.zip"
 if [ "$(file --brief --mime-type 'steamworks_sdk.zip')" = 'application/zip' ];then
 	# only extract the files we want
 	unzip steamworks_sdk.zip 'sdk/redistributable_bin/steam_api.dll' 'sdk/redistributable_bin/linux64/libsteam_api.so'
@@ -48,8 +48,8 @@ else
 fi
 
 # grab copies of luasteam for win32 & lin64
-curl --disable --location --output 'luasteam.dll' 'https://github.com/uspgamedev/luasteam/releases/download/v2.0.0%2Bfix/win32_luasteam.dll'
-curl --disable --location --output 'luasteam.so' 'https://github.com/uspgamedev/luasteam/releases/download/v2.0.0%2Bfix/linux64_luasteam.so'
+curl --disable --location --output 'luasteam.dll' 'https://github.com/uspgamedev/luasteam/releases/download/v3.0.0/win32_luasteam.dll'
+curl --disable --location --output 'luasteam.so' 'https://github.com/uspgamedev/luasteam/releases/download/v3.0.0/linux64_luasteam.so'
 
 if [ "$sdk" = 'true' ]; then
 	mv -t 'windows32-libraries' 'sdk/redistributable_bin/steam_api.dll'
