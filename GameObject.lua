@@ -63,6 +63,19 @@ function GameObject:enemyProjectileCollisions()
 						no_projectiles = proj.object.proj_spawned
 					})
 				end
+            elseif current_room.player.bouncer and proj.object.bounce and proj.object.bounce > 0 then
+                proj.object.bounce = proj.object.bounce - 1
+                local x1, y1 = proj.object.shape:center()
+                local x2, y2 = self.shape:center()
+                local n = math.atan2(y2 - y1, x2 -x1)
+                local nx, ny = math.cos(n), math.sin(n)
+                local wall = n - math.pi/2
+                local wx, wy = math.cos(wall), math.sin(wall)
+                local vx, vy = math.cos(proj.object.r), math.sin(proj.object.r)
+                local ux, uy = (vx * nx + vy * ny) * nx, (vx * nx + vy * ny) * ny
+                local wx, wy = vx - ux, vy - uy
+                local Vx, Vy = wx - ux, wy - uy
+                proj.object.r = math.acos(Vx), math.asin(Vy)
             else
 				proj.object:die()
 			end
